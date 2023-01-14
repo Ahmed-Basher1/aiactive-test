@@ -1,10 +1,9 @@
 const db = require("../db/config");
 const User = db.User;
+const bcrypt = require('bcryptjs');
 const { StatusCodes } = require('http-status-codes');
 const CustomError = require('../errors');
 const {
-  createTokenUser,
-  attachCookiesToResponse,
   chechPermissions,
 } = require('../utils');
 
@@ -15,11 +14,11 @@ const getAllUsers = async (req, res) => {
 };
 
 const getSingleUser = async (req, res) => {
-  const user = await User.findOne({ where: { id: req.params.id} });
+  const user = await User.findOne({ where: { id: req.params.id} ,attributes: {exclude: ['password']}});
   if (!user) {
     throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
   }
-  chechPermissions(req.user, user._id);
+  chechPermissions(req.user, user.id);
   res.status(StatusCodes.OK).json({ user });
 };
 
@@ -28,29 +27,26 @@ const showCurrentUser = async (req, res) => {
 };
 // update user with user.save()
 const updateUser = async (req, res) => {
-  const { email, name } = req.body;
-  if (!email || !name) {
+  const { email, username } = req.body;
+  if (!email || !username) {
     throw new CustomError.BadRequestError('Please provide all values');
   }
-  const user = await User.findOne({ _id: req.user.userId });
+  const user = await User.findOne({ where: { id: req.user.userId},attributes: {exclude: ['password']} });
 
   user.email = email;
-  user.name = name;
+  user.username = username;
 
   await user.save();
 
-  const tokenUser = createTokenUser(user);
-  attachCookiesToResponse({ res, user: tokenUser });
-  res.status(StatusCodes.OK).json({ user: tokenUser });
+  res.status(StatusCodes.OK).json({ msg : " update user successfully ",user: user });
 };
 const updateUserPassword = async (req, res) => {
   const { oldPassword, newPassword } = req.body;
   if (!oldPassword || !newPassword) {
     throw new CustomError.BadRequestError('Please provide both values');
   }
-  const user = await User.findOne({ _id: req.user.userId });
-
-  const isPasswordCorrect = await user.comparePassword(oldPassword);
+  const user = await User.findOne({ where: { id: req.user.userId}});
+  const isPasswordCorrect = await bcrypt.compare(oldPassword,user.password)
   if (!isPasswordCorrect) {
     throw new CustomError.UnauthenticatedError('Invalid Credentials');
   }
@@ -68,18 +64,3 @@ module.exports = {
   updateUserPassword,
 };
 
-// update user with findOneAndUpdate
-// const updateUser = async (req, res) => {
-//   const { email, name } = req.body;
-//   if (!email || !name) {
-//     throw new CustomError.BadRequestError('Please provide all values');
-//   }
-//   const user = await User.findOneAndUpdate(
-//     { _id: req.user.userId },
-//     { email, name },
-//     { new: true, runValidators: true }
-//   );
-//   const tokenUser = createTokenUser(user);
-//   attachCookiesToResponse({ res, user: tokenUser });
-//   res.status(StatusCodes.OK).json({ user: tokenUser });
-// };

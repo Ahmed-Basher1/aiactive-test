@@ -1,16 +1,23 @@
 const bcrypt = require('bcryptjs');
 module.exports = (sequelize, Sequelize) => {
-    const Task = sequelize.define("users", {
+    const User = sequelize.define("users", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
         primaryKey: true
       },
-      name: {
-        type: Sequelize.STRING
+      username: {
+        type: Sequelize.STRING,
+        allowNull: false,
+        unique: true
       },
       email: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        validate: {
+          isEmail : true
+        },
+        allowNull: false,
+        unique: true
       },
       password: {
         type: Sequelize.STRING
@@ -36,13 +43,7 @@ module.exports = (sequelize, Sequelize) => {
           const salt = await bcrypt.genSalt(10);
           user.password = await bcrypt.hashSync(user.password, salt);
         }
-      },
-        freezeTableName: true,
-        instanceMethods: {
-          validPassword: (password) => {
-           return bcrypt.compareSync(password, this.password);
-          }
-         }
+      }
     });
-    return Task;
+    return User;
   };

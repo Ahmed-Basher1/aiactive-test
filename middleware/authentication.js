@@ -21,7 +21,7 @@ const authenticateUser = async (req, res, next) => {
     // Attach the user and his permissions to the req object
     req.user = {
       userId: payload.userId,
-      name: payload.name,
+      username: payload.username,
       role: payload.role,
     };
     next();
@@ -36,7 +36,7 @@ const authorizeRoles = (...roles) => {
   return (req, res, next) => {
     if (!roles.includes(req.user.role)) {
       throw new CustomError.UnauthorizedError(
-        '{"enMessage" : "Unauthorized to access this route", "arMessage" :"غير مصرح لك لإستخدام هذه الصفحة"}'
+        'Unauthorized to access this route'
       );
     }
     next();
