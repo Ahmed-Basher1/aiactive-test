@@ -21,7 +21,12 @@ const notFoundMiddleware = require('./middleware/not-found');
 const errorHandlerMiddleware = require('./middleware/error-handler');
 app.use(express.json());
 
-
+// ?  Use Swagger
+// ? Setup Swagger Docs
+const swaggerUi = require('swagger-ui-express')
+const swaggerJsDoc = require("swagger-jsdoc");
+const options = require('./helpers/swaggerDocs')
+const swaggerDocs = swaggerJsDoc(options);
 // ? rateLimiter to avoid Dos attack
 app.use(
     rateLimiter({
@@ -38,6 +43,7 @@ app.use(
   // ? main routes 
   app.use('/api/v1/auth', authRouter);
   app.use('/api/v1/user', userRouter);
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
   // ? Error Handler
   app.use(errorHandlerMiddleware);
   // ? not Found 

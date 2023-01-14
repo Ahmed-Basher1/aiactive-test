@@ -27,6 +27,8 @@
     "sequelize": "^6.28.0",
     "sequelize-cli": "^6.5.2",
     "sqlite3": "^5.1.4",
+    "swagger-jsdoc": "^6.2.7",
+    "swagger-ui-express": "^4.6.0",
     "xss-clean": "^0.1.1"
   }
 }
