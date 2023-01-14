@@ -15,21 +15,34 @@ module.exports = (sequelize, Sequelize) => {
       password: {
         type: Sequelize.STRING
       },
+      otp: {
+        type: Sequelize.STRING
+      },
       role : {
         type: Sequelize.ENUM,
         values: ['admin', 'user'],
         defaultValue : "user"
+      },
+      isVerified: {
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      verified:  {
+        type: Sequelize.DATE,
       }
     },{
+      hooks: {
+        beforeCreate: async(user) => {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hashSync(user.password, salt);
+        }
+      },
         freezeTableName: true,
         instanceMethods: {
-            generateHash(password) {
-                return bcrypt.hash(password, bcrypt.genSaltSync(8));
-            },
-            validPassword(password) {
-                return bcrypt.compare(password, this.password);
-            }
-        }
+          validPassword: (password) => {
+           return bcrypt.compareSync(password, this.password);
+          }
+         }
     });
     return Task;
   };

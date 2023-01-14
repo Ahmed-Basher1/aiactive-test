@@ -9,14 +9,14 @@ const rateLimiter = require('express-rate-limit');
 const cors =  require('cors');
 const xss = require('xss-clean');
 const db = require("./db/config");
-
 db.sequelize.sync();
- const authRouter = require('./routes/auth');
-//  const userRouter = require('./routes/userRoutes');
+
+const authRouter = require('./routes/auth');
+const userRouter = require('./routes/user');
 
 // middleware
-// const notFoundMiddleware = require('./middleware/not-found');
-// const errorHandlerMiddleware = require('./middleware/error-handler');
+const notFoundMiddleware = require('./middleware/not-found');
+const errorHandlerMiddleware = require('./middleware/error-handler');
 app.use(express.json());
 
 app.use(
@@ -31,13 +31,12 @@ app.use(
   app.use(morgan('tiny'));
   
   app.use('/api/v1/auth', authRouter);
-//   app.use('/api/v1/user', userRouter);
-//   app.use(errorHandlerMiddleware);
-//  app.use(notFoundMiddleware);
+  app.use('/api/v1/user', userRouter);
+  app.use(errorHandlerMiddleware);
+ app.use(notFoundMiddleware);
 const port = process.env.PORT || 5000;
 const start = async () => {
   try {
-    // await connectMongo(process.env.MONGO_URL);
     app.listen(port, () =>
       console.log(`Server is listening on port ${port}...`)
     );
