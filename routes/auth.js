@@ -23,7 +23,7 @@ const {
  *                  properties:
  *                    email:
  *                      type: string
- *                      example: sharex@gmail.com
+ *                      example: info@gmail.com
  *                    password:
  *                      type: string
  *                      example: ahmed@1234
@@ -33,7 +33,7 @@ const {
  *    description: Register To AIactive for users
  *    responses:
  *      '201':
- *        description: User Added To sharex System
+ *        description: User Added To info System
  *      '400':
  *        description: Bad Request
  *      '409':
@@ -56,7 +56,7 @@ router.post('/add-user',authenticateUser,authorizeRoles('admin'), addUser);
  *                  properties:
  *                    email:
  *                      type: string
- *                      example: sharex@gmail.com
+ *                      example: info@gmail.com
  *                    password:
  *                      type: string
  *                      example: ahmed@1234
@@ -66,7 +66,7 @@ router.post('/add-user',authenticateUser,authorizeRoles('admin'), addUser);
  *    description: Register To Safe-road Mobile App Using Valid Saudi Number && Password
  *    responses:
  *      '201':
- *        description: User Added To sharex System
+ *        description: User Added To info System
  *      '400':
  *        description: Bad Request
  *      '409':
