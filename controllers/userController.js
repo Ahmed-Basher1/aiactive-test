@@ -55,12 +55,21 @@ const updateUserPassword = async (req, res) => {
   await user.save();
   res.status(StatusCodes.OK).json({ msg: 'Success! Password Updated.' });
 };
-
+const deleteUser = async (req, res) => {
+  const user = await User.findOne({ where: { id: req.params.id} ,attributes: {exclude: ['password']}});
+  if (!user) {
+    throw new CustomError.NotFoundError(`No user with id : ${req.params.id}`);
+  }
+  await user.destroy();
+  // const user = await User.findOne({ where: { id: req.user.userId},attributes: {exclude: ['password']} });
+  res.status(StatusCodes.OK).json({ msg : " delete user successfully "});
+};
 module.exports = {
   getAllUsers,
   getSingleUser,
   showCurrentUser,
   updateUser,
   updateUserPassword,
+  deleteUser
 };
 

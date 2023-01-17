@@ -10,6 +10,7 @@ const {
   showCurrentUser,
   updateUser,
   updateUserPassword,
+  deleteUser
 } = require('../controllers/userController');
 /**
 * @swagger
@@ -68,5 +69,6 @@ router.route('/updateUser').patch(authenticateUser, updateUser);
 router.route('/updateUserPassword').patch(authenticateUser, updateUserPassword);
 
 router.route('/:id').get(authenticateUser,getSingleUser);
+router.route('delete/:id').delete(authenticateUser,authorizeRoles('admin'),deleteUser);
 
 module.exports = router;
